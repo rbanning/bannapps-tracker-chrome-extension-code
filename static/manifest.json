@@ -12,5 +12,8 @@
     },
     "default_popup": "popup.html"
   },
-  "permissions": []
+  "permissions": [],
+  "host_permissions": [
+    "https://bannapps-tracker-api.netlify.app/"
+  ]
 }

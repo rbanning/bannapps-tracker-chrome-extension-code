@@ -1,8 +1,9 @@
-import * as dayjs from "dayjs";
+import dayjs from "dayjs";
 import utc from 'dayjs/plugin/utc';
 dayjs.extend(utc);
 
 export interface ITracker {
+  key: string;
   id: string;
   uid: string;
   name: string;
@@ -14,6 +15,7 @@ export interface ITracker {
 
 
 export class Tracker implements ITracker {
+  key: string;
   id: string = '';
   uid: string = '';
   name: string = '';
@@ -25,6 +27,7 @@ export class Tracker implements ITracker {
   constructor(obj: any = null) {
 
     if (obj) {
+      this.key = obj.key;
       this.id = obj.id || this.id;
       this.uid = obj.uid;
       this.name = obj.name;

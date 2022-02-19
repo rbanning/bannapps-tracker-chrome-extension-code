@@ -8,10 +8,13 @@ export class PopupComponent {
       const result = await this.SayHello('Rob');
       console.log("DEBUG: say hello", result);
       const trackerService = new TrackerService();
-      trackerService.getAll()
+      await trackerService.getAll()
         .then(results => {
           console.log("DEBUG: tracker records", results);
-        });
+        })
+        .catch(error => {
+          console.warn("DEBUG tracker records failed", error);
+        })
     });
   }
 

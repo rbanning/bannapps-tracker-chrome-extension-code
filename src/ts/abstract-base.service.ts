@@ -32,14 +32,17 @@ export abstract class AbstractBaseService<T> {
       const config: RequestInit = {
         method: 'GET',
         headers: this.buildHeaders(),
-        mode: 'cors'
+        //mode: 'cors'
       };
       const url = this.BASE_URL;
+      console.log("DEBUG: About to run the getAll() request", config);
       return await fetch(url, config)
         .then(async (resp) => {
+          console.log("DEBUG: initial resp", resp);
           return await resp.json();
         })
         .then((results: IApiStandardResponse) => {
+          console.log("DEBUG: raw results", results);
           return this.postGetterMultiple(results);
         });
     }
@@ -55,9 +58,9 @@ export abstract class AbstractBaseService<T> {
     return headers;
   }
 
-  protected postGetterSingle(resp: IApiStandardResponse): T | null {
+  protected postGetterSingle(resp: IApiStandardResponse | any): T | null {
     if (resp) {
-      return new this.modelBuilder(resp.result);
+      return new this.modelBuilder(resp.result || resp);
     }
     //else
     return null;
