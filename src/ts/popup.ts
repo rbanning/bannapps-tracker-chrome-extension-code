@@ -1,3 +1,5 @@
+import { TrackerService } from "./tracker.service";
+
 export class PopupComponent {
 
 
@@ -5,6 +7,11 @@ export class PopupComponent {
     document.addEventListener('DOMContentLoaded', async () => {
       const result = await this.SayHello('Rob');
       console.log("DEBUG: say hello", result);
+      const trackerService = new TrackerService();
+      trackerService.getAll()
+        .then(results => {
+          console.log("DEBUG: tracker records", results);
+        });
     });
   }
 
