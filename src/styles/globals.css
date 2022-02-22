@@ -15,3 +15,65 @@ a {
 * {
   box-sizing: border-box;
 }
+
+.container {
+  margin: 0 auto;
+  padding: 0 1em;
+  max-width: 800px;
+  width: 100%;
+}
+
+.field {
+  margin: 1em 0;
+  max-width: 400px;
+}
+.field input, .field select, .field textarea {
+  display: block;
+  width: 100%;
+  padding: 0.6em;
+  border-radius: 5px;
+  border: solid 1px slategray;
+  outline: none;
+  background-color: white;
+}
+.field label {
+  display: block;
+  color: slategray;
+  font-weight: bold;
+}
+.field input:focus {
+  border-color: black;
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  margin: 2em 0;
+}
+.actions > * {
+  margin: 0 0.4em;
+}
+
+.btn {
+  border: solid 1px rgba(0,0,0, 0.3);
+  border-radius: 0.5em;
+  padding: 0.5em 0.7em;
+  outline: none;
+  background-color: rgba(0,0,0, 0.1);
+  color: slategray;
+  transition: all 0.3s ease-in-out;
+}
+.btn:hover {
+  border-color: rgba(0,0,0, 0.6);
+}
+.btn-primary {
+  background-color: rgb(255, 170, 137); 
+  font-weight: 600;
+  color: rgb(209 81 32);
+}
+.btn:disabled {
+  border-color:rgba(0,0,0, 0.2);
+  background:rgba(0,0,0, 0.1);
+  color: rgba(0,0,0, 0.4)
+}

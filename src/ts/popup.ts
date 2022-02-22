@@ -1,28 +1,44 @@
 import { TrackerService } from "./tracker.service";
 
 export class PopupComponent {
-
-
   run() {
-    document.addEventListener('DOMContentLoaded', async () => {
-      const result = await this.SayHello('Rob');
+    document.addEventListener("DOMContentLoaded", async () => {
+      const result = await this.SayHello();
       console.log("DEBUG: say hello", result);
-      const trackerService = new TrackerService();
-      await trackerService.getAll()
-        .then(results => {
-          console.log("DEBUG: tracker records", results);
-        })
-        .catch(error => {
-          console.warn("DEBUG tracker records failed", error);
-        })
+
+      chrome.runtime.sendMessage(
+        { id: "page-meta" },
+        (response) => {
+          console.log("DEBUG: Response from BG.page-meta", response);
+        }
+      );
+
+      // const trackerService = new TrackerService();
+      // await trackerService.getAll()
+      //   .then(results => {
+      //     console.log("DEBUG: tracker records", results);
+      //     chrome.runtime.sendMessage(
+      //       {id: 'badge-text', text: `${results.length}`},
+      //       response => {
+      //         console.log("DEBUG: Response from BG", response);
+      //       });
+      //   })
+      //   .catch(error => {
+      //     console.warn("DEBUG tracker records failed", error);
+      //   })
     });
   }
 
-  private async SayHello(name: string = 'Jane') {
-    return new Promise((resolve, reject) => {
-      window.setTimeout(() => {
-        resolve(`Hello ${name || 'unknown'}!  Glad you made it PAL`);
-      }, 2000);
+  private async SayHello() {
+    return new Promise(async (resolve, reject) => {
+      const [tab] = await chrome.tabs.query({
+        active: true,
+        currentWindow: true,
+      });
+      console.log("DEBUG: SayHello", tab);
+      resolve(
+        `Hello ${tab.title || "unknown"}, url is [${tab.url || "no url"}]`
+      );
     });
   }
 }
