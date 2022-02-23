@@ -1,39 +1,58 @@
 import { __awaiter } from "tslib";
+import { sendMessageAsPromise } from "./send-message-as-promise";
+import { SettingsService } from "./settings.service";
+import { TrackerService } from "./tracker.service";
 export class PopupComponent {
-    run() {
+    constructor() {
+        this.MESSAGE_KEY = 'page-meta';
+        this.areas = {};
+        this.fields = {};
+        this.buttons = {};
+        this.domains = [];
+    }
+    init() {
         document.addEventListener("DOMContentLoaded", () => __awaiter(this, void 0, void 0, function* () {
-            const result = yield this.SayHello();
-            console.log("DEBUG: say hello", result);
-            chrome.runtime.sendMessage({ id: "page-meta" }, (response) => {
-                console.log("DEBUG: Response from BG.page-meta", response);
-            });
-            // const trackerService = new TrackerService();
-            // await trackerService.getAll()
-            //   .then(results => {
-            //     console.log("DEBUG: tracker records", results);
-            //     chrome.runtime.sendMessage(
-            //       {id: 'badge-text', text: `${results.length}`},
-            //       response => {
-            //         console.log("DEBUG: Response from BG", response);
-            //       });
-            //   })
-            //   .catch(error => {
-            //     console.warn("DEBUG tracker records failed", error);
-            //   })
+            this.refresh();
         }));
     }
-    SayHello() {
+    refresh() {
+        this.setWorking(true);
+        const actions = [
+            this.getSettings(),
+            sendMessageAsPromise(this.MESSAGE_KEY)
+        ];
+        Promise.all(actions)
+            .then(([settings, pageMeta]) => {
+            this.domains = settings === null || settings === void 0 ? void 0 : settings.domains;
+            this.meta = pageMeta;
+            const trackerService = new TrackerService();
+            return trackerService.getAllForSingleDomain(pageMeta === null || pageMeta === void 0 ? void 0 : pageMeta.domain);
+        })
+            .then((records) => this.loadRecords(records))
+            .finally(() => this.setWorking(false));
+    }
+    loadRecords(records) {
+        //todo: implement loadRecords
+    }
+    getSettings() {
         return __awaiter(this, void 0, void 0, function* () {
-            return new Promise((resolve, reject) => __awaiter(this, void 0, void 0, function* () {
-                const [tab] = yield chrome.tabs.query({
-                    active: true,
-                    currentWindow: true,
-                });
-                console.log("DEBUG: SayHello", tab);
-                resolve(`Hello ${tab.title || "unknown"}, url is [${tab.url || "no url"}]`);
-            }));
+            const settingsService = new SettingsService();
+            return yield settingsService.refresh()
+                .then((settings) => {
+                return settings;
+            });
         });
+    }
+    setWorking(state) {
+        if (this.areas.working) {
+            this.areas.working.classList.toggle('show', state);
+            Object.keys(this.buttons).forEach(key => {
+                if (this.buttons[key]) {
+                    this.buttons[key].disabled = state;
+                }
+            });
+        }
     }
 }
 const pop = new PopupComponent();
-pop.run();
+pop.init();
